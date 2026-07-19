@@ -1,0 +1,55 @@
+/* ===========================================
+   AI Business Intelligence Platform Theme
+=========================================== */
+
+.main > div {
+    padding-top: 1rem;
+    padding-bottom: 2rem;
+}
+
+/* ------------------------------------------
+   Buttons
+------------------------------------------ */
+
+.stButton > button {
+    width: 100%;
+    border-radius: 10px;
+    height: 3rem;
+    font-weight: 600;
+}
+
+/* ------------------------------------------
+   Metrics
+------------------------------------------ */
+
+div[data-testid="metric-container"] {
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    padding: 18px;
+    border: 1px solid #dddddd;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+
+/* ------------------------------------------
+   Containers
+------------------------------------------ */
+
+div.block-container {
+    padding-top: 2rem;
+}
+
+/* ------------------------------------------
+   Tables
+------------------------------------------ */
+
+[data-testid="stDataFrame"] {
+    border-radius: 10px;
+}
+
+/* ------------------------------------------
+   Success Messages
+------------------------------------------ */
+
+div[data-testid="stAlert"] {
+    border-radius: 10px;
+}

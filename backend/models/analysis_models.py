@@ -369,6 +369,8 @@ class AnalysisResult(BaseAnalysisModel):
     statistics: List[
         BusinessStatistic
     ] = Field(default_factory=list)
+    
+    
 
 
 # ==========================================================

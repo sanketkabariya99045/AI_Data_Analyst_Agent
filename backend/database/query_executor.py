@@ -43,22 +43,68 @@ class QueryExecutor:
     ) -> None:
         """
         Validate SQL before execution.
+        Supports SELECT and WITH...SELECT queries.
         """
+
+        # ------------------------------------------
+        # Remove SQL comments
+        # ------------------------------------------
+
+        lines = []
+
+        for line in sql.splitlines():
+
+            line = line.strip()
+
+            if line.startswith("--"):
+                continue
+
+            lines.append(line)
+
+        sql = "\n".join(lines).strip()
+
+        if not sql:
+
+            raise ValueError(
+                "SQL query is empty."
+            )
 
         sql_upper = sql.upper()
 
-        for keyword in self.BLOCKED_KEYWORDS:
+        # ------------------------------------------
+        # Block dangerous SQL anywhere
+        # ------------------------------------------
 
+        dangerous_keywords = [
+            "DROP",
+            "DELETE",
+            "UPDATE",
+            "INSERT",
+            "ALTER",
+            "TRUNCATE",
+            "CREATE",
+            "REPLACE",
+        ]
+
+        for keyword in dangerous_keywords:
+
+            # Ignore WITH because it is safe
             if keyword in sql_upper:
 
                 raise ValueError(
                     f"Blocked SQL keyword detected: {keyword}"
                 )
 
-        if not sql_upper.strip().startswith("SELECT"):
+        # ------------------------------------------
+        # Allow SELECT and CTEs
+        # ------------------------------------------
+
+        first_word = sql_upper.split()[0]
+
+        if first_word not in ("SELECT", "WITH"):
 
             raise ValueError(
-                "Only SELECT statements are allowed."
+                "Only SELECT or WITH...SELECT statements are allowed."
             )
 
     # ------------------------------------------

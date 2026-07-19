@@ -10,7 +10,6 @@ Author: Sanket Kabariya
 """
 
 from __future__ import annotations
-
 import logging
 
 from backend.models.analysis_models import (
@@ -21,7 +20,7 @@ from backend.models.analysis_models import (
     TrendDirection,
     TrendResult,
 )
-
+from backend.models.analysis_models import BusinessInsight
 logger = logging.getLogger(__name__)
 
 
@@ -43,6 +42,7 @@ class RecommendationEngine:
         self,
         trend: TrendResult,
         anomaly: AnomalyResult,
+        insights: list | None = None,
     ) -> RecommendationResult:
         """
         Generate business recommendations.
@@ -69,6 +69,13 @@ class RecommendationEngine:
         recommendations.extend(
             self._anomaly_recommendations(anomaly)
         )
+        
+        if insights is not None:
+            recommendations.extend(
+                self._business_recommendations(
+                    insights
+                )
+            )
 
         logger.info(
             "%d recommendation(s) generated.",
@@ -130,6 +137,104 @@ class RecommendationEngine:
             )
         ]
 
+
+    def _business_recommendations(
+        self,
+        insights,
+    ) -> list[Recommendation]:
+        """
+        Generate recommendations from business insights.
+        """
+
+        recommendations: list[Recommendation] = []
+
+        for insight in insights:
+
+            title = insight.title.lower()
+
+            # Revenue
+            if "revenue" in title:
+
+                recommendations.append(
+
+                    Recommendation(
+
+                        priority=PriorityLevel.MEDIUM,
+
+                        category="Revenue",
+
+                        recommendation=(
+                            "Continue investing in high-performing "
+                            "revenue sources while monitoring "
+                            "future growth."
+                        ),
+                    )
+
+                )
+
+            # Profit
+
+            elif "profit" in title:
+
+                recommendations.append(
+
+                    Recommendation(
+
+                        priority=PriorityLevel.HIGH,
+
+                        category="Profit",
+
+                        recommendation=(
+                            "Review cost structure and improve "
+                            "profit margins through pricing or "
+                            "operational efficiency."
+                        ),
+                    )
+
+                )
+
+            # Region
+
+            elif "region" in title:
+
+                recommendations.append(
+
+                    Recommendation(
+
+                        priority=PriorityLevel.MEDIUM,
+
+                        category="Market",
+
+                        recommendation=(
+                            "Focus marketing investment on "
+                            "high-performing regions while "
+                            "improving weaker markets."
+                        ),
+                    )
+
+                )
+
+            # Discount
+
+            elif "discount" in title:
+
+                recommendations.append(
+
+                    Recommendation(
+
+                        priority=PriorityLevel.LOW,
+
+                        category="Pricing",
+
+                        recommendation=(
+                            "Review discount strategy regularly "
+                            "to ensure profitability is maintained."
+                        ),
+                    )
+
+                )
+
+        return recommendations
     # -----------------------------------------------------
 
     def _anomaly_recommendations(

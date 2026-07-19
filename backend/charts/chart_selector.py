@@ -20,6 +20,13 @@ from backend.charts.chart_models import (
     DatasetMetadata,
 )
 
+from backend.charts.axis_selector import (
+    axis_selector,
+)
+
+from backend.charts.chart_intelligence import (
+    chart_intelligence,
+)
 
 class ChartSelector:
     """
@@ -70,39 +77,40 @@ class ChartSelector:
             request.dataframe
         )
 
-        question = request.question.lower()
 
         if request.preferred_chart:
 
             chart_type = request.preferred_chart
 
-        elif "trend" in question or "over time" in question:
-
-            chart_type = ChartType.LINE
-
-        elif "distribution" in question:
-
-            chart_type = ChartType.HISTOGRAM
-
-        elif "relationship" in question or "correlation" in question:
-
-            chart_type = ChartType.SCATTER
-
-        elif "percentage" in question or "share" in question:
-
-            chart_type = ChartType.PIE
-
-        elif "heatmap" in question:
-
-            chart_type = ChartType.HEATMAP
-
         else:
 
-            chart_type = ChartType.BAR
+            recommendation = chart_intelligence.recommend(
+                question=request.question,
+                dataframe=request.dataframe,
+            )
 
-        x_axis = self.choose_x(metadata)
+            chart_map = {
+                "bar": ChartType.BAR,
+                "line": ChartType.LINE,
+                "pie": ChartType.PIE,
+                "scatter": ChartType.SCATTER,
+                "histogram": ChartType.HISTOGRAM,
+                "box": ChartType.BOX,
+                "area": ChartType.AREA,
+                "heatmap": ChartType.HEATMAP,
+                "table": ChartType.BAR,
+            }
 
-        y_axis = self.choose_y(metadata)
+            chart_type = chart_map.get(
+                recommendation,
+                ChartType.BAR,
+            )
+            print("FINAL CHART TYPE:", chart_type)
+
+        x_axis, y_axis = axis_selector.select(
+            question=request.question,
+            dataframe=request.dataframe,
+        )
 
         return ChartConfig(
             chart_type=chart_type,

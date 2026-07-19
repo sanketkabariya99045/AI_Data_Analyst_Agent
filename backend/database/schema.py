@@ -113,9 +113,35 @@ class SchemaManager:
             "columns":
             self.get_table_schema(
                 table_name
+            ),
+
+            "sample_rows":
+            self.get_sample_rows(
+                table_name
             )
         }
+        # ---------------------------------------------
 
+    def get_sample_rows(
+        self,
+        table_name: str,
+        limit: int = 5,
+    ) -> list[dict]:
+        """
+        Return sample rows from the table.
+        """
+
+        query = f"""
+        SELECT *
+        FROM {table_name}
+        LIMIT {limit}
+        """
+
+        df = self.database.execute_query(query)
+
+        return df.to_dict(
+            orient="records"
+        )
     # ---------------------------------------------
 
     def get_database_schema(self) -> Dict:

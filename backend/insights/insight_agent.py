@@ -58,6 +58,29 @@ from backend.models.analysis_models import (
     AnalysisMetadata,
     AnalysisResult,
 )
+from backend.intelligence.insight_generator import (
+    insight_generator,
+)
+
+from backend.intelligence.column_detector import (
+    column_detector,
+)
+
+from backend.intelligence.statistic_generator import (
+    statistic_generator,
+)
+
+from backend.intelligence.narrative_generator import (
+    narrative_generator,
+)
+
+from backend.models.analysis_models import (
+    ExplanationResult,
+)
+
+from backend.insights.kpi_generator import kpi_generator
+from backend.models.analysis_models import BusinessInsight
+
 
 logger = logging.getLogger(__name__)
 
@@ -119,6 +142,11 @@ class InsightAgent:
             or ExplanationAgent()
         )
 
+        self.kpi_generator = kpi_generator
+        self.insight_generator = insight_generator
+        self.statistic_generator = statistic_generator
+        self.narrative_generator = narrative_generator
+
     # =====================================================
     # PUBLIC API
     # =====================================================
@@ -138,9 +166,48 @@ class InsightAgent:
 
         start_time = time.perf_counter()
 
-        self._validate_dataframe(
-            dataframe,
-        )
+        if not self._validate_dataframe(dataframe):
+
+            logger.info(
+                "Query returned no rows."
+            )
+
+            empty_metadata = AnalysisMetadata(
+                question=question,
+                total_rows=0,
+                total_columns=len(dataframe.columns),
+                execution_time=round(
+                    time.perf_counter() - start_time,
+                    4,
+                ),
+            )
+
+            empty_summary = self.summary_generator.generate_empty_summary()
+
+            empty_explanation = ExplanationResult(
+                success=True,
+                overview="The query executed successfully but returned no rows.",
+                trends="No trends available.",
+                risks="None.",
+                opportunities="Try a broader query.",
+                recommendations="Modify the filters or use different criteria.",
+                conclusion="No matching records were found.",
+                model="System",
+                error=None,
+            )
+
+            return AnalysisResult(
+                metadata=empty_metadata,
+                summary=empty_summary,
+                explanation=empty_explanation,
+                trends=[],
+                anomalies=[],
+                recommendations=[],
+                kpis=[],
+                insights=[],
+                charts=[],
+                statistics=[],
+            )
 
         # -------------------------------------------------
         # Automatic Column Selection
@@ -152,8 +219,85 @@ class InsightAgent:
 
         if selected.metric is None:
 
-            raise ValueError(
-                "No numeric metric column detected."
+            logger.info(
+                "No numeric metric detected. Returning descriptive analysis."
+            )
+
+            metadata = AnalysisMetadata(
+
+                question=question,
+
+                total_rows=len(dataframe),
+
+                total_columns=len(dataframe.columns),
+
+                execution_time=round(
+                    time.perf_counter() - start_time,
+                    4,
+                ),
+
+                selected_metric=None,
+
+                selected_category=selected.category,
+
+                selected_datetime=selected.datetime,
+            )
+
+            summary = self.summary_generator.generate_empty_summary()
+
+            summary.executive_summary = (
+                "The query returned descriptive data. "
+                "No numeric metric was available for statistical analysis."
+            )
+
+            explanation = ExplanationResult(
+
+                success=True,
+
+                overview=(
+                    "The result contains descriptive information "
+                    "rather than numerical measures."
+                ),
+
+                trends="Trend analysis is unavailable.",
+
+                risks="No risks detected.",
+
+                opportunities=(
+                    "You can explore this data further using filters "
+                    "or aggregation."
+                ),
+
+                recommendations="",
+
+                conclusion=summary.executive_summary,
+
+                model="System",
+
+                error=None,
+            )
+
+            return AnalysisResult(
+
+                metadata=metadata,
+
+                summary=summary,
+
+                explanation=explanation,
+
+                trends=[],
+
+                anomalies=[],
+
+                recommendations=[],
+
+                kpis=[],
+
+                insights=[],
+
+                charts=[],
+
+                statistics=[],
             )
 
         logger.info(
@@ -175,6 +319,37 @@ class InsightAgent:
             trend.trend.value,
         )
 
+        # ------------------------------------------
+        # KPI Generation
+        # ------------------------------------------
+
+        kpis = self.kpi_generator.generate(
+            dataframe
+        )
+
+        # ---------------------------------------------
+        # Detect business columns
+        # ---------------------------------------------
+
+        business_columns = column_detector.detect(
+            dataframe.columns.tolist()
+        )
+
+        # ---------------------------------------------
+        # Generate intelligent insights
+        # ---------------------------------------------
+
+        insights = [
+            BusinessInsight(**item)
+            for item in self.insight_generator.generate(
+                dataframe=dataframe,
+                columns=business_columns,
+            )
+        ]
+
+        statistics = self.statistic_generator.generate(
+            dataframe
+        )
         # -------------------------------------------------
         # Anomaly Detection
         # -------------------------------------------------
@@ -197,6 +372,7 @@ class InsightAgent:
             self.recommendation_engine.generate(
                 trend=trend,
                 anomaly=anomaly,
+                insights=insights,
             )
         )
 
@@ -205,10 +381,11 @@ class InsightAgent:
             recommendations.total,
         )
 
-        #
-        # Continue in Response 2
-        #
-        
+        narrative = self.narrative_generator.generate(
+            kpis=kpis,
+            insights=insights,
+        )
+
         # -------------------------------------------------
         # Executive Summary
         # -------------------------------------------------
@@ -220,6 +397,7 @@ class InsightAgent:
                 recommendations=recommendations,
             )
         )
+        summary.executive_summary = narrative
 
         logger.info(
             "Executive summary generated."
@@ -258,7 +436,6 @@ class InsightAgent:
         # AI Business Explanation
         # -------------------------------------------------
 
-
         try:
 
             explanation = (
@@ -282,9 +459,7 @@ class InsightAgent:
                 error,
             )
 
-            from backend.models.analysis_models import (
-                ExplanationResult,
-            )
+            
 
             explanation = ExplanationResult(
                 success=False,
@@ -303,32 +478,16 @@ class InsightAgent:
         # -------------------------------------------------
 
         analysis = AnalysisResult(
-
             metadata=metadata,
-
             summary=summary,
-
             explanation=explanation,
-
-            trends=[
-                trend,
-            ],
-
-            anomalies=[
-                anomaly,
-            ],
-
-            recommendations=[
-                recommendations,
-            ],
-
-            kpis=[],
-
-            insights=[],
-
+            trends=[trend],
+            anomalies=[anomaly],
+            recommendations=[recommendations],
+            kpis=kpis,
+            insights=insights,
             charts=[],
-
-            statistics=[],
+            statistics=statistics,
         )
 
         logger.info(
@@ -344,25 +503,21 @@ class InsightAgent:
     @staticmethod
     def _validate_dataframe(
         dataframe: pd.DataFrame,
-    ) -> None:
-        """
-        Validate dataframe before analysis.
-        """
+    ) -> bool:
 
         if dataframe is None:
+
             raise ValueError(
                 "DataFrame cannot be None."
             )
 
-        if dataframe.empty:
-            raise ValueError(
-                "Cannot analyze an empty DataFrame."
-            )
-
         if len(dataframe.columns) == 0:
+
             raise ValueError(
                 "DataFrame contains no columns."
             )
+
+        return not dataframe.empty
 
     # -----------------------------------------------------
 

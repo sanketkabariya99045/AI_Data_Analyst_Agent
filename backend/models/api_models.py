@@ -18,7 +18,9 @@ from __future__ import annotations
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
-
+from backend.suggestions.suggestion_models import (
+    SuggestedQuestion,
+)
 
 # ==========================================================
 # BASE MODEL
@@ -102,6 +104,8 @@ class AnalyzeResponse(APIModel):
     statistics: list[dict[str, Any]] = Field(
         default_factory=list
     )
+    
+    executive_summary: str | None = None
 
     chart: dict[str, Any] | None = None
 
@@ -129,7 +133,29 @@ class UploadFileInfo(APIModel):
 
     columns: list[str]
 
+class DatasetProfileResponse(APIModel):
+    """
+    Dataset profiling information.
+    """
 
+    rows: int
+
+    columns: int
+
+    memory_mb: float
+
+    duplicate_rows: int
+
+    missing_values: int
+
+    numeric_columns: list[str] = Field(default_factory=list)
+
+    categorical_columns: list[str] = Field(default_factory=list)
+
+    datetime_columns: list[str] = Field(default_factory=list)
+
+    business_columns: list[str] = Field(default_factory=list)
+    
 class UploadResponse(APIModel):
     """
     Upload API response.
@@ -140,3 +166,9 @@ class UploadResponse(APIModel):
     total_files: int
 
     files: list[UploadFileInfo]
+
+    profile: DatasetProfileResponse | None = None
+
+    suggestions: list[SuggestedQuestion] = Field(
+        default_factory=list
+    )

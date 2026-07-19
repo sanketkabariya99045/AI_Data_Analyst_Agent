@@ -42,6 +42,10 @@ from backend.agents.planner_agent import (
     planner_agent,
 )
 
+from backend.conversation.conversation_manager import (
+    conversation_manager,
+)
+
 from backend.agents.sql_agent import (
     sql_agent,
 )
@@ -58,6 +62,10 @@ from backend.services.analysis_service import (
     analysis_service,
     AnalysisServiceResponse,
 )
+from backend.database.sql_repair import (
+    sql_repair,
+)
+
 
 logger = logging.getLogger(__name__)
 
@@ -106,6 +114,7 @@ class AgentManager:
         question: str,
     ) -> AgentResponse:
 
+        
         logger.info(
             "Starting AI pipeline."
         )
@@ -117,8 +126,12 @@ class AgentManager:
             # Planner
             # ---------------------------------
 
-            plan = planner_agent.analyze(
+            prepared_question = conversation_manager.prepare_question(
                 question
+            )
+
+            plan = planner_agent.analyze(
+                prepared_question
             )
 
             logger.info(
@@ -154,6 +167,19 @@ class AgentManager:
 
             sql = sql_result.sql
 
+            # ---------------------------------
+            # SQL Repair
+            # ---------------------------------
+
+            original_sql = sql
+
+            sql = sql_repair.repair(sql)
+
+            if sql != original_sql:
+
+                logger.info("SQL repaired automatically.")
+
+
             logger.info(
                 "SQL generated successfully."
             )
@@ -162,7 +188,7 @@ class AgentManager:
             # Continue in Part 2
             #
             
-                        # ---------------------------------
+            # ---------------------------------
             # Step 3
             # SQL Validation
             # ---------------------------------
@@ -255,7 +281,16 @@ class AgentManager:
             # Step 6
             # Final Response
             # ---------------------------------
+            conversation_manager.remember(
 
+                question=question,
+
+                sql=sql,
+
+                chart_type=None,
+
+                result_columns=list(dataframe.columns),
+            )
             return AgentResponse(
                 success=True,
                 question=question,
@@ -268,12 +303,6 @@ class AgentManager:
         except Exception as error:
 
             logger.exception("Agent Manager failed.")
-
-            print("=" * 80)
-            print("AGENT MANAGER ERROR")
-            print(type(error).__name__)
-            print(str(error))
-            print("=" * 80)
 
             return AgentResponse(
                 success=False,

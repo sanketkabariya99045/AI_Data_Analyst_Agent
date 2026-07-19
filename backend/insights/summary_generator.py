@@ -90,7 +90,43 @@ class SummaryGenerator:
             anomaly_summary=anomaly_summary,
             recommendation_summary=recommendation_summary,
         )
+        
+        # -----------------------------------------------------
 
+    def generate_empty_summary(
+        self,
+    ) -> SummaryResult:
+        """
+        Summary used when the SQL query returns
+        zero rows.
+        """
+
+        return SummaryResult(
+
+            executive_summary=(
+                "The query executed successfully, "
+                "but no matching records were found."
+            ),
+
+            overview=(
+                "No data matched the requested "
+                "criteria."
+            ),
+
+            trend_summary=(
+                "Trend analysis is unavailable."
+            ),
+
+            anomaly_summary=(
+                "No anomalies detected because "
+                "the result set is empty."
+            ),
+
+            recommendation_summary=[
+                "Try broadening your filters.",
+                "Verify the requested conditions.",
+            ],
+        )
     # -----------------------------------------------------
 
     @staticmethod

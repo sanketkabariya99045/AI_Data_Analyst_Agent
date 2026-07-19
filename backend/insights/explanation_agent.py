@@ -140,16 +140,65 @@ class ExplanationAgent:
                 "Explanation generation failed."
             )
 
+            # -----------------------------------------
+            # Fallback Explanation
+            # -----------------------------------------
+
+            if anomaly.anomaly_count == 0:
+
+                risk_text = (
+                    "No significant business risks were detected."
+                )
+
+            else:
+
+                risk_text = (
+                    f"{anomaly.anomaly_count} anomaly(s) were detected "
+                    "and should be reviewed."
+                )
+
+            recommendation_text = "\n".join(
+
+                r.recommendation
+
+                for r in recommendation.recommendations
+
+            )
+
+            if not recommendation_text:
+
+                recommendation_text = (
+                    "No business recommendations available."
+                )
+
+            fallback = (
+                "AI-generated explanation is temporarily unavailable. "
+                "A structured summary has been generated from the analysis."
+            )
+
             return ExplanationResult(
-                success=False,
-                overview="",
-                trends="",
-                risks="",
-                opportunities="",
-                recommendations="",
-                conclusion="",
+
+                success=True,
+
+                overview=fallback,
+
+                trends=trend.message,
+
+                risks=risk_text,
+
+                opportunities=(
+                    "Review KPI trends and recommendations "
+                    "for potential improvements."
+                ),
+
+                recommendations=recommendation_text,
+
+                conclusion=summary.executive_summary,
+
                 model=self.model_name,
+
                 error=str(exc),
+
             )
 
 

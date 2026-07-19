@@ -77,10 +77,26 @@ class SQLValidator:
         for table in tree.find_all(exp.Table):
 
             tables.append(table.name)
+        # ---------------------------------------
+        # Collect CTE names
+        # ---------------------------------------
+
+        cte_names = set()
+
+        for cte in tree.find_all(exp.CTE):
+
+            if cte.alias:
+
+                cte_names.add(cte.alias)
 
         existing = schema_manager.list_tables()
 
         for table in tables:
+
+            # Skip Common Table Expressions
+            if table in cte_names:
+
+                continue
 
             if table not in existing:
 

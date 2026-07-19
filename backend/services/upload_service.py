@@ -9,7 +9,12 @@ from backend.utils.file_utils import (
     save_upload_file,
     validate_file_extension,
 )
-
+from backend.profiling.dataset_profiler import (
+    dataset_profiler,
+)
+from backend.suggestions.suggestion_engine import (
+    suggestion_engine,
+)
 
 class UploadService:
     """
@@ -54,7 +59,11 @@ class UploadService:
             }
 
             for sheet_name, df in dataframes.items():
-
+                
+                profile = dataset_profiler.profile(df)
+                suggestions = suggestion_engine.generate(
+                    profile.business_columns
+                )   
                 file_result["sheets"].append({
 
                     "sheet_name": sheet_name,
@@ -63,8 +72,15 @@ class UploadService:
 
                     "columns": int(df.shape[1]),
 
-                    "column_names": df.columns.tolist()
-                })
+                    "column_names": df.columns.tolist(),
+
+                    "profile": profile.model_dump(),
+
+                    "suggestions": [
+                        suggestion.model_dump()
+                        for suggestion in suggestions.suggestions
+                    ],
+                })  
 
             uploaded_data.append(file_result)
 
