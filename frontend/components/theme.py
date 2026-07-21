@@ -8,19 +8,17 @@ Sanket Kabariya
 """
 
 import streamlit as st
-
+from pathlib import Path
 
 class Theme:
 
     @staticmethod
     def load():
 
-        with open(
-            "assets/style.css",
-            encoding="utf-8",
-        ) as css:
+        BASE_DIR = Path(__file__).resolve().parent.parent
+        CSS_FILE = BASE_DIR / "assets" / "style.css"
 
-            st.markdown(
-                f"<style>{css.read()}</style>",
-                unsafe_allow_html=True,
-            )
+        with open(CSS_FILE, encoding="utf-8") as css:
+            st.markdown(f"<style>{css.read()}</style>", unsafe_allow_html=True)
+
+        
