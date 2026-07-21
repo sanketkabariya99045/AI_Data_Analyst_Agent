@@ -1,24 +1,14 @@
-"""
-frontend/services/dashboard_api.py
-
-Dashboard API Client
-
-Author:
-Sanket Kabariya
-"""
-
 from __future__ import annotations
 
 import requests
+
+from utils.config import BACKEND_URL, REQUEST_TIMEOUT
 
 
 class DashboardAPI:
 
     def __init__(self):
-
-        self.base_url = "http://127.0.0.1:8000/api"
-
-    # -----------------------------------------------------
+        self.base_url = f"{BACKEND_URL}/api"
 
     def build_dashboard(
         self,
@@ -26,26 +16,16 @@ class DashboardAPI:
     ):
 
         response = requests.post(
-
             f"{self.base_url}/dashboard",
-
             json={
-
                 "question": question,
-
             },
-
-            timeout=120,
-
+            timeout=REQUEST_TIMEOUT,
         )
 
         response.raise_for_status()
 
         return response.json()
 
-
-# =======================================================
-# Singleton
-# =======================================================
 
 dashboard_api = DashboardAPI()
