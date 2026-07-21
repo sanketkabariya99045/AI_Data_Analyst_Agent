@@ -1,261 +1,210 @@
 # 🚀 AI Business Intelligence Platform
 
-An enterprise-grade AI-powered Business Intelligence platform that enables users to upload datasets, ask business questions in natural language, automatically generate SQL queries, build interactive dashboards, and receive AI-generated business insights.
-
-> Built as a portfolio project inspired by modern BI tools like **Power BI Copilot**, **ThoughtSpot Sage**, and **Tableau Pulse**.
+An AI-powered Business Intelligence platform that enables users to upload datasets, ask questions in natural language, generate SQL automatically, create interactive visualizations, and build executive dashboards using Generative AI.
 
 ---
 
-# 📸 Project Overview
+## 🌐 Live Demo
 
-The AI Business Intelligence Platform allows users to:
+**Frontend:** (https://sk-ai-data-analytics.streamlit.app/)
 
-- 📂 Upload CSV and Excel datasets
-- 🤖 Ask questions in natural language
-- 🧠 Generate SQL using AI
-- 🗄 Execute SQL on DuckDB
-- 📊 Build interactive dashboards
-- 📈 Generate charts automatically
-- 💡 Produce AI-powered business insights
-- 📋 Generate executive summaries
-- 🤖 Explain business trends using AI
-- 📥 Export SQL, CSV, JSON, and dashboards
+**Backend API:** https://ai-data-analyst-api-mui0.onrender.com
+
+---
+
+# 📸 Screenshots
+
+> *(Add screenshots of your application here)*
+
+- Home Page
+- Upload Dataset
+- AI Analysis
+- Executive Summary
+- Dashboard Builder
+- Interactive Charts
 
 ---
 
 # ✨ Features
 
-## 📂 Dataset Management
+## 📂 Dataset Upload
 
-- CSV Upload
-- Excel Upload
-- Multiple Sheet Support
-- Automatic Dataset Detection
-- Metadata Generation
-- Dataset Preview
-- Upload Validation
+- Upload CSV and Excel datasets
+- Automatic schema detection
+- Dataset preview
+- Data profiling
+- Data quality analysis
 
 ---
 
 ## 🤖 AI Data Analyst
 
-Ask questions such as:
+Ask business questions in plain English.
 
-> Which category generated the highest sales?
+Examples:
 
-> Show monthly revenue trend.
-
-> Compare profit by region.
+- Show total sales by region
+- Top 10 customers by revenue
+- Monthly sales trend
+- Highest profit products
+- Average delivery time
 
 The platform automatically:
 
-- Understands the question
+- Understands your question
 - Generates SQL
 - Executes SQL
-- Builds charts
-- Generates KPIs
-- Produces AI explanations
+- Returns insights
+
+---
+
+## 📊 Interactive Visualizations
+
+Automatically generates:
+
+- Bar Charts
+- Line Charts
+- Pie Charts
+- KPI Cards
+- Tables
+
+using Plotly.
+
+---
+
+## 📈 Executive Insights
+
+AI automatically generates:
+
+- Executive Summary
+- Key Findings
+- Business Recommendations
+- Trend Analysis
 
 ---
 
 ## 📊 AI Dashboard Builder
 
-Automatically creates executive dashboards including:
+Generate complete dashboards using natural language.
 
-- KPI Cards
-- Interactive Charts
-- Business Tables
+Example:
+
+```
+Create a Sales Dashboard
+```
+
+The platform automatically creates:
+
+- KPIs
+- Charts
+- Tables
 - Executive Summary
-- Recommendations
-- Trend Analysis
-
----
-
-## 📈 Business Visualizations
-
-Supports AI-generated visualizations including:
-
-- Bar Charts
-- Line Charts
-- Pie Charts
-- Area Charts
-- Scatter Charts
-- Horizontal Charts
-
-Built using Plotly for interactive analytics.
-
----
-
-## 💻 SQL Workspace
-
-Features include:
-
-- AI Generated SQL
-- SQL Validation
-- SQL Download
-- Query Execution Statistics
-- DuckDB Integration
-
----
-
-## 📄 Result Workspace
-
-- Interactive Data Tables
-- Search Functionality
-- Dataset Statistics
-- CSV Export
-- JSON Export
-
----
-
-## 📋 Executive Summary
-
-Automatically generates:
-
-- Executive Summary
-- Business Overview
-- Trend Summary
-- Risk Analysis
-- Recommendations
-
----
-
-## 🤖 AI Business Explanation
-
-Provides:
-
-- Business Overview
-- Trend Explanation
-- Risk Analysis
-- Opportunities
-- Recommendations
-- Final Conclusion
 
 ---
 
 # 🏗 Architecture
 
 ```
-                    User
-                      │
-                      ▼
-              Streamlit Frontend
-                      │
-                      ▼
-               FastAPI Backend
-                      │
-      ┌───────────────┼────────────────┐
-      ▼               ▼                ▼
- AI Dashboard     AI Data Analyst    Upload Engine
-      │               │
-      ▼               ▼
- Dashboard Planner   SQL Generator
-      │               │
-      ▼               ▼
- Dashboard SQL     DuckDB Engine
-      │               │
-      ▼               ▼
- KPI Engine       Query Executor
+                User
+                  │
+                  ▼
+        Streamlit Frontend
+                  │
+                  ▼
+          FastAPI Backend
+                  │
+      ┌───────────┴───────────┐
+      ▼                       ▼
+   DuckDB                 Gemini AI
       │
       ▼
- Chart Engine
-      │
-      ▼
- Summary Engine
-      │
-      ▼
- Explanation Engine
+ Business Insights
 ```
 
 ---
 
 # 🛠 Technology Stack
 
-### Frontend
+## Frontend
 
 - Streamlit
-- Plotly
 
-### Backend
+## Backend
 
 - FastAPI
-- Python
 
-### Database
+## Database
 
 - DuckDB
 
-### AI
+## AI
 
-- Google Gemini API
+- Google Gemini
 
-### Data Processing
+## Data Processing
 
 - Pandas
 - NumPy
 
-### Visualization
+## Visualization
 
 - Plotly
+
+## File Support
+
+- CSV
+- Excel
+
+## Deployment
+
+- Streamlit Community Cloud
+- Render
 
 ---
 
 # 📁 Project Structure
 
 ```
-AI_Business_Intelligence_Platform/
+AI_Data_Analyst_Agent/
 
 ├── backend/
-│   ├── agents/
 │   ├── api/
+│   ├── agents/
 │   ├── charts/
 │   ├── dashboard/
 │   ├── database/
 │   ├── insights/
 │   ├── llm/
-│   ├── models/
+│   ├── profiling/
 │   ├── services/
-│   └── utils/
+│   └── suggestions/
 │
 ├── frontend/
 │   ├── components/
-│   ├── dashboard/
-│   ├── layout/
 │   ├── pages/
 │   ├── services/
-│   ├── state/
-│   ├── styles/
-│   └── utils/
+│   ├── utils/
+│   ├── assets/
+│   └── app.py
 │
-├── data/
 ├── requirements.txt
 └── README.md
 ```
 
 ---
 
-# ⚙️ Installation
+# ⚙ Installation
 
 Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/AI_Data_Analyst_Agent.git
+git clone https://github.com/sanketkabariya99045/AI_Data_Analyst_Agent.git
+```
 
+Move into the project
+
+```bash
 cd AI_Data_Analyst_Agent
-```
-
-Create virtual environment
-
-```bash
-python -m venv .venv
-```
-
-Activate environment
-
-Windows
-
-```bash
-.venv\Scripts\activate
 ```
 
 Install dependencies
@@ -264,29 +213,19 @@ Install dependencies
 pip install -r requirements.txt
 ```
 
----
+Create a `.env` file
 
-# ▶️ Run Backend
+```
+GEMINI_API_KEY=YOUR_API_KEY
+```
+
+Run the backend
 
 ```bash
 uvicorn backend.api.main:app --reload
 ```
 
-Backend:
-
-```
-http://127.0.0.1:8000
-```
-
-Swagger:
-
-```
-http://127.0.0.1:8000/docs
-```
-
----
-
-# ▶️ Run Frontend
+Run the frontend
 
 ```bash
 streamlit run frontend/app.py
@@ -294,67 +233,18 @@ streamlit run frontend/app.py
 
 ---
 
-# 🎯 Workflow
-
-```
-Upload Dataset
-        │
-        ▼
-Ask Business Question
-        │
-        ▼
-AI Generates SQL
-        │
-        ▼
-Execute Query
-        │
-        ▼
-Generate KPIs
-        │
-        ▼
-Generate Charts
-        │
-        ▼
-Generate Insights
-        │
-        ▼
-Executive Summary
-        │
-        ▼
-Business Explanation
-```
-
----
-
-# 📌 Current Features
-
-- AI SQL Generation
-- Interactive Dashboard Builder
-- KPI Dashboard
-- AI Executive Summary
-- AI Business Explanation
-- Interactive Charts
-- Query Workspace
-- Dataset Explorer
-- CSV & Excel Upload
-- Multi-sheet Support
-- Export Results
-- Enterprise UI
-
----
-
 # 🚀 Future Enhancements
 
-- Conversational AI with Memory
-- Dashboard Persistence
 - User Authentication
+- Dashboard Export (PDF/PNG)
+- Chat History
+- Multiple Dataset Support
+- Forecasting
+- Database Connections
 - Scheduled Reports
-- PDF & PowerPoint Export
-- Multi-user Workspace
-- Database Connectors (MySQL, PostgreSQL, Snowflake)
-- Role-based Access Control
-- Dashboard Sharing
-- AI Chat Assistant
+- Role-Based Access Control
+- Docker Support
+- Kubernetes Deployment
 
 ---
 
@@ -362,13 +252,16 @@ Business Explanation
 
 **Sanket Kabariya**
 
-Aspiring Data Analyst | AI Engineer | Python Developer
+Aspiring Data Analyst | AI Developer
 
 GitHub:
 https://github.com/sanketkabariya99045
+
+LinkedIn:
+*(www.linkedin.com/in/sanket-kabariya-790a21366)*
 
 ---
 
 # ⭐ Support
 
-If you found this project useful, please consider giving it a ⭐ on GitHub.
+If you found this project useful, consider giving it a ⭐ on GitHub.
