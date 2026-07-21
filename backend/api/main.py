@@ -26,3 +26,10 @@ def root():
     return {
         "message": "AI Data Analyst Backend Running"
     }
+    
+@app.get("/health")
+def health():
+    return {
+        "status": "healthy",
+        "service": "AI Data Analyst API"
+    }

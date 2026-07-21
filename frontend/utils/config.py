@@ -1,8 +1,9 @@
-"""
-Application configuration.
-"""
+import os
 
-BACKEND_URL = "http://127.0.0.1:8000"
+BACKEND_URL = os.getenv(
+    "BACKEND_URL",
+    "https://ai-data-analyst-api-mui0.onrender.com"
+)
 
 UPLOAD_ENDPOINT = f"{BACKEND_URL}/api/upload"
 ANALYZE_ENDPOINT = f"{BACKEND_URL}/api/analyze"
